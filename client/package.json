@@ -11,9 +11,19 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "add": "^2.0.6",
     "axios": "^1.13.4",
+    "badge": "^1.0.3",
+    "button": "^1.1.1",
+    "card": "^2.5.4",
+    "init": "^0.1.2",
+    "input": "^1.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-router": "^7.13.0",
+    "select": "^1.1.2",
+    "separator": "^0.1.0",
+    "shadcn": "^3.8.2",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
