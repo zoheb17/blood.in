@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-const donationSchema = new mongoose.Schema({
+// const donationSchema = new mongoose.Schema({
 
-})
+// })

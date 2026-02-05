@@ -1,1 +1,26 @@
-@import "tailwindcss"
+@import "tailwindcss";
+
+.glass {
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,0,0,.25);
+}
+
+@keyframes float {
+  0% { transform: translateY(-100vh); opacity:.2 }
+  100% { transform: translateY(100vh); opacity:0 }
+}
+
+@keyframes beat {
+  0%,100% { transform: scale(1) }
+  50% { transform: scale(1.3) }
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(30px) }
+  to { opacity:1; transform: translateY(0) }
+}
+
+.float { animation: float linear infinite }
+.beat { animation: beat 1.2s infinite }
+.fadeUp { animation: fadeUp .7s ease both }

@@ -1,6 +1,6 @@
 import express from "express";
-import donorModel from "../../models/Donor.js";
-import userModel from "../../models/User.js";
+import donorModel from "../../Models/Donor/Donor.js";
+import userModel from "../../Models/User/User.js";
 
 const router = express.Router();
 
@@ -9,15 +9,17 @@ router.post("/donor-form", async (req, res) => {
     let { bloodGroup, age, city } = req.body;
     let user = await userModel.findOne({ email: req.user.email });
     let donor = await donorModel.findOne({ userEmail: user.email });
+    if (donor) {
+      return res.status(400).json({ msg: "You are already registered as a donor" });
+    } 
+    // const THREE_MONTHS = 90 * 24 * 60 * 60 * 1000;
+    // const diff = Date.now() - new Date(donor.lastDonationDate).getTime();
 
-    const THREE_MONTHS = 90 * 24 * 60 * 60 * 1000;
-    const diff = Date.now() - new Date(donor.lastDonationDate).getTime();
-
-    if (diff < THREE_MONTHS) {
-      return res.status(400).json({
-        msg: "You can donate again after 3 months",
-      });
-    }
+    // if (diff < THREE_MONTHS) {
+    //   return res.status(400).json({
+    //     msg: "You can donate again after 3 months",
+    //   });
+    // }
     let finalobject = {
       bloodGroup,
       age,
@@ -63,4 +65,28 @@ router.put("/update-user",async (req,res)=>{
         res.status(500).json(error)
     }
 })
+
+router.post("/blood-request", async (req, res) => {
+  try {
+    const { bloodGroup } = req.body;
+    console.log(bloodGroup)
+    const user = await userModel.findOne({ email: req.user.email });
+    console.log(user)
+    const donors = await donorModel.find({
+      bloodGroup,
+      city: user.city,
+      isAvailable: true,
+    });
+    console.log(donors)
+    if (!donors.length) {
+      return res.status(404).json({ msg: "No donors found" });
+    }
+
+    res.json(donors);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+
 export default router;

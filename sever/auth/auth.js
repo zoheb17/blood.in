@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function middleware(req, res, next) {
     try {
@@ -6,7 +8,7 @@ async function middleware(req, res, next) {
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.SECKEY);
         req.user = decoded;
         next();
     } catch (error) {

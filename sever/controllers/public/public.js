@@ -1,21 +1,21 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import userModel from "../../models/User.js";
-import sendSMS from "../../utlis/sms.js";
-import sendmail from "../../utlis/mailer.js";
+import userModel from "../../Models/User/User.js";
+import sendSMS from "../../utils/sms.js";
+import sendmail from "../../utils/mailer.js";
 import jwt from "jsonwebtoken"
 
 const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
-    let { name, bloodGroup, phone, email, password, city, age } = req.body;
+    let { name, phone, email, password, city} = req.body;
     let user = await  userModel.findOne({ $or: [{ email }, { phone }] });
     if (user) {
       return res.status(400).json({ msg: "user alerady exist" });
     }
     let hashpass = await bcrypt.hash(password,10);
-    let emailToken = Math.random().toString(36).slice(2, 10);
-    let phoneToken = Math.random().toString(36).slice(2, 10);
+    let emailToken = Math.floor(Math.random() * (999999 - 100000) + 10000)
+    let phoneToken = Math.floor(Math.random() * (999999 - 100000) + 10000)
 
     let finalobject = {
       name,
@@ -29,17 +29,16 @@ router.post("/register", async (req, res) => {
       },
     };
     await userModel.create(finalobject)
-    let emailurl = `http://localhost:5000/doner/verify-email/${emailToken}`;
-    let phoneurl = `http://localhost:5000/doner/verify-email/${phoneToken}`;
+
 
     await sendmail(
       email,
       `welcome to blood donation App`,
       
-      `please verify link ${emailurl}`,
+      `please enter the otp to verify\n ${emailToken}`,
     );
 
-    // await sendSMS(phone, `pleasse click the link below ${phoneurl}`);
+    // await sendSMS(phone, `pleasse enter the otp to verify ${phoneToken}`);
     res.status(201).json({ msg: `Account register  sucessfully` });
 
 
@@ -49,14 +48,14 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.get("/verify-email/:emailToken", async (req, res) => {
+router.post("/verify-email", async (req, res) => {
   try {
-    let emailToken = req.params.emailToken;
+    let emailotp = req.body.emailotp;
 
-    if (!emailToken) {
+    if (!emailotp) {
       return res.status(400).json({ msg: "no token" });
     }
-    let user = await userModel.findOne({ "isVerifiedToken.emailToken": emailToken });
+    let user = await userModel.findOne({ "isVerifiedToken.emailToken": emailotp });
     if (!user) {
       res.status(400).json({ msg: "invalid token or no user found" });
     }
@@ -69,14 +68,14 @@ router.get("/verify-email/:emailToken", async (req, res) => {
     res.status(500).json({msg:error})
   }
 });
-router.get("/verify-phone/:phoneToken", async (req, res) => {
+router.post("/verify-phone", async (req, res) => {
   try {
-    let phoneToken = req.params.phoneToken;
+    let phoneotp = req.body.phoneotp;
 
-    if (!phoneToken) {
+    if (!phoneotp) {
       return res.status(400).json({ msg: "no token" });
     }
-    let user = await userModel.findOne({ "isVerifiedToken.phoneToken": phoneToken });
+    let user = await userModel.findOne({ "isVerifiedToken.phoneToken": phoneotp });
     if (!user) {
       res.status(400).json({ msg: "invalid token or no user found" });
     }

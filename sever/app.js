@@ -20,7 +20,7 @@ app.use(express.json());
 let corsObject = {
     origin : ["http://localhost:5173"],
     methods : ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders : ["Authorization"]
+    // allowedHeaders : ["authorization"]
 }
 app.use(cors(corsObject))
 const port = process.env.PORT;

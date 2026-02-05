@@ -43,6 +43,6 @@ const donorSchema = new mongoose.Schema({
     timestamps : true
 });
 
-const donorModel = await mongoose.model("Doner",donorSchema);
+const donorModel = await mongoose.model("Donor",donorSchema);
 
 export default donorModel;
