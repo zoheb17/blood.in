@@ -36,13 +36,10 @@ router.post("/donor-form", async (req, res) => {
   }
 });
 
-router.get("/blood", async (req, res) => {
+router.get("/getalldonors", async (req, res) => {
   try {
-    const { bloodGroup, city } = req.params;
-    const donors = await donorModel.find(
-      { bloodGroup, city, isAvailable: true },
-      { _id: 0, bloodGroup: 1, city: 1, userName: 1 },
-    );
+    const donors = await donorModel.find()
+    console.log(donors)
     if (!donors) {
       return res
         .status(404)
