@@ -7,6 +7,7 @@ export default function UserRegister() {
 
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -27,15 +28,11 @@ export default function UserRegister() {
     try {
       await axios.post("http://localhost:5000/public/register", form);
 
-      // alert("🎉 OTP sent to your phone!");
-
-      // ✅ redirect to OTP page
-      navigate("/verify-otp", {
-        state: { phone: form.phone },
-      });
+      // After successful registration, guide user to email verification info page
+      navigate("/verify-email", { state: { email: form.email } });
 
     } catch (err) {
-      alert(err.response?.data?.message || "Error");
+      setError(err.response?.data?.msg || err.response?.data?.message || "Error");
     } finally {
       setLoading(false);
     }
@@ -58,7 +55,7 @@ export default function UserRegister() {
 
           <Input label="Phone Number" name="phone" onChange={handleChange} required />
 
-          <Input label="Email (optional)" type="email" name="email" onChange={handleChange} />
+          <Input label="Email" type="email" name="email" onChange={handleChange} required />
 
           <Input label="City" name="city" onChange={handleChange} required />
 
@@ -91,6 +88,12 @@ export default function UserRegister() {
           >
             {loading ? "Creating..." : "Create Account"}
           </button>
+
+          {error && (
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
+              {error}
+            </div>
+          )}
 
           <p className="text-center text-sm text-gray-500">
             Already have account?{" "}

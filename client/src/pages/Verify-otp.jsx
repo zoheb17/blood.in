@@ -34,7 +34,7 @@ export default function VerifyOtp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-white to-rose-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-rose-50 via-white to-rose-100 p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
 
         <h2 className="text-2xl font-bold text-center text-rose-600 mb-2">

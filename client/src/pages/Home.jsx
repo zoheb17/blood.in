@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 const mock = [
-  { id: 1, name: "Rahil Don", city: "Akola", group: "O+", phone: "7666892754" },
-  { id: 2, name: "Kasim", city: "Akola", group: "O-", phone: "8087248248" },
+  { id: 1, name: "Zoheb", city: "Akola", group: "AB-", phone: "9022442668" },
+  { id: 2, name: "Rahil", city: "Akola", group: "O+", phone: "7666892754" },
+  { id: 3, name: "Kasim", city: "Akola", group: "O-", phone: "8087248248" },
+  { id: 4, name: "Ayaan", city: "Nagpur", group: "A+", phone: "9876543210" },
+  { id: 5, name: "Sameer", city: "Pune", group: "B+", phone: "9123456780" },
 ];
 
 export default function Home() {
-  const navigate = useNavigate(); // ✅ hook must be inside component
+  const navigate = useNavigate();
 
-  const [donors, setDonors] = useState([]);
+  const [donors] = useState(mock);
   const [search, setSearch] = useState("");
   const [group, setGroup] = useState("All");
-
-  useEffect(() => {
-    setDonors(mock);
-  }, []);
 
   const filtered = donors.filter((d) => {
     const s =
@@ -29,6 +28,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-rose-50 via-white to-rose-100 text-gray-900">
+
       {/* NAVBAR */}
       <nav className="sticky top-0 bg-white/90 backdrop-blur-lg border-b border-rose-200">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
@@ -37,7 +37,7 @@ export default function Home() {
           </h1>
 
           <button
-            onClick={() => navigate("/donor-register")}
+            onClick={() => navigate("/login")}
             className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-2 rounded-full font-semibold transition"
           >
             Donate Now
@@ -80,24 +80,32 @@ export default function Home() {
       </section>
 
       {/* DONOR CARDS */}
-      <section className="max-w-6xl mx-auto grid md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 pb-20">
+      <section className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 px-6 pb-20">
         {filtered.map((d) => (
           <div
             key={d.id}
-            className="bg-white border border-rose-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition"
+            className="bg-white rounded-3xl p-6 shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-rose-100 flex flex-col justify-between"
           >
-            <h3 className="font-semibold">{d.name}</h3>
-            <p className="text-gray-500 text-sm">{d.city}</p>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">{d.name}</h3>
+              <p className="text-sm text-gray-500 mt-1">📍 {d.city}</p>
+            </div>
 
-            <div className="mt-4 flex justify-between items-center">
-              <span className="bg-rose-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+            <div className="my-5">
+              <span className="bg-linear-to-r from-rose-600 to-red-500 text-white px-4 py-1.5 rounded-full text-sm font-semibold shadow">
                 {d.group}
               </span>
+            </div>
 
-              {/* ✅ Navigate to login on click */}
+            {/* ✅ masked phone only */}
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-400">
+                {d.phone.slice(0, 4) + "******"}
+              </p>
+
               <button
                 onClick={() => navigate("/login")}
-                className="text-rose-600 text-sm font-semibold hover:underline"
+                className="bg-rose-50 text-rose-600 px-4 py-2 rounded-full text-sm font-semibold hover:bg-rose-100 transition"
               >
                 Contact →
               </button>

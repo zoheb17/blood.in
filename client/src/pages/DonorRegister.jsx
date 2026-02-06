@@ -1,18 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 export default function DonorRegister() {
+
+  // ✅ MUST be inside component
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
-    userName: "",
-    userEmail: "",
-    age: "",
     bloodGroup: "",
+    age: "",
     city: "",
-    lastDonationDate: "",
-    isAvailable: true,
+    phone: "" // ✅ added only
   });
 
   const handleChange = (e) => {
@@ -25,7 +29,7 @@ export default function DonorRegister() {
 
     setForm(updated);
 
-    // 🔥 live age validation
+    // age validation (unchanged)
     if (name === "age") {
       const age = Number(value);
       if (age < 18 || age > 45) {
@@ -41,7 +45,6 @@ export default function DonorRegister() {
 
     const age = Number(form.age);
 
-    // 🔥 final protection
     if (age < 18 || age > 45) {
       setError("Age must be between 18 and 45 years");
       return;
@@ -50,17 +53,27 @@ export default function DonorRegister() {
     setLoading(true);
 
     try {
-      await axios.post("/api/donors/register", form);
-      alert("🎉 Registered successfully!");
+      await axios.post(
+        "http://localhost:5000/private/donor-form",
+        form, // phone automatically included
+        {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      navigate("/dashboard");
+
     } catch (err) {
-      alert(err.response?.data?.message || "Error");
+      setError(err.response?.data?.msg || err.response?.data?.message || "Error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-red-50 to-red-100 p-4">
 
       <div className="w-full max-w-lg bg-white shadow-2xl rounded-3xl p-8">
 
@@ -73,28 +86,6 @@ export default function DonorRegister() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-
-          <Input label="Full Name" name="userName" onChange={handleChange} required />
-
-          <Input label="Email" type="email" name="userEmail" onChange={handleChange} required />
-
-          {/* Age with limits */}
-          <div>
-            <label className="text-sm font-medium text-gray-600">Age</label>
-            <input
-              type="number"
-              name="age"
-              min="18"
-              max="45"
-              onChange={handleChange}
-              required
-              className={`mt-1 w-full border rounded-xl p-3 outline-none
-                ${error ? "border-red-500 ring-2 ring-red-200" : "focus:ring-2 focus:ring-red-400"}`}
-            />
-            {error && (
-              <p className="text-red-500 text-xs mt-1">{error}</p>
-            )}
-          </div>
 
           {/* Blood group */}
           <select
@@ -114,24 +105,38 @@ export default function DonorRegister() {
             <option>AB-</option>
           </select>
 
-          <Input label="City" name="city" onChange={handleChange} required />
-
-          <Input label="Last Donation Date" type="date" name="lastDonationDate" onChange={handleChange} />
-
-          <label className="flex items-center gap-3 text-gray-600">
+          {/* Age */}
+          <div>
+            <label className="text-sm font-medium text-gray-600">Age</label>
             <input
-              type="checkbox"
-              name="isAvailable"
-              defaultChecked
+              type="number"
+              name="age"
+              min="18"
+              max="45"
               onChange={handleChange}
-              className="w-5 h-5 accent-red-600"
+              required
+              className={`mt-1 w-full border rounded-xl p-3 outline-none
+                ${error ? "border-red-500 ring-2 ring-red-200" : "focus:ring-2 focus:ring-red-400"}`}
             />
-            Available to donate
-          </label>
+            {error && (
+              <p className="text-red-500 text-xs mt-1">{error}</p>
+            )}
+          </div>
+
+          {/* ✅ Phone number input added */}
+          <Input
+            label="Phone Number"
+            name="phone"
+            type="tel"
+            onChange={handleChange}
+            required
+          />
+
+          <Input label="City" name="city" onChange={handleChange} required />
 
           <button
             disabled={loading || error}
-            className="w-full bg-gradient-to-r from-red-600 to-red-500 text-white p-3 rounded-xl font-semibold shadow-md disabled:opacity-50 hover:scale-[1.02] transition"
+            className="w-full bg-linear-to-r from-red-600 to-red-500 text-white p-3 rounded-xl font-semibold shadow-md disabled:opacity-50 hover:scale-[1.02] transition"
           >
             {loading ? "Registering..." : "Register as Donor"}
           </button>

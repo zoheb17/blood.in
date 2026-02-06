@@ -8,12 +8,14 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
+      setError("");
 
       const res = await axios.post(
         "http://localhost:5000/public/login",
@@ -26,18 +28,16 @@ export default function Login() {
       // ✅ save token
       localStorage.setItem("token", res.data.token);
 
-      alert(res.data.msg);
-
-      // navigate("/dashboard"); // go home
+      navigate("/dashboard"); // go home
     } catch (err) {
-      alert(err.response?.data?.msg || "Login failed");
+      setError(err.response?.data?.msg || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-rose-50 via-white to-rose-100 flex items-center justify-center px-6">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-rose-100 flex items-center justify-center px-6">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-rose-200">
 
         <h2 className="text-3xl font-bold text-center text-rose-600 mb-2">
@@ -71,6 +71,12 @@ export default function Login() {
               className="w-full mt-2 border rounded-lg p-3"
             />
           </div>
+
+          {error && (
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"

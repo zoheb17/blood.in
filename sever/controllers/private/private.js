@@ -23,9 +23,10 @@ router.post("/donor-form", async (req, res) => {
     let finalobject = {
       bloodGroup,
       age,
-      city,
+      city:user.city,
       userEmail: user.email,
       userName: user.name,
+      userPhone: user.phone
     };
     await donorModel.create(finalobject);
     res.status(200).json({ msg: "you are added as an donor" });

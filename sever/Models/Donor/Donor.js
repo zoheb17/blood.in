@@ -35,6 +35,10 @@ const donorSchema = new mongoose.Schema({
     type : String,
     required : true
   },
+  userPhone : {
+    type : String,
+    required : true
+  },
   isActive : {
     type : Boolean,
     default : true 
